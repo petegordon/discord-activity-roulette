@@ -1,7 +1,7 @@
 import { motionEnv, motionVerdict } from "../platform/capabilities";
 import { inDiscord } from "../platform/env";
 import { MAX_WHEEL, normalizeSpin, WHEEL_FRICTION, WHEEL_READY, type SpinInput } from "../wheel/spin";
-import { MotionReader, ShakeTracker, twistWheel } from "./motion";
+import { FlickDetector, MotionReader, twistWheel } from "./motion";
 
 /** "blocked": the browser forbids motion in this frame (Discord); "unavailable": no sensors or permission. */
 export type MotionState = "unknown" | "needs-permission" | "active" | "blocked" | "unavailable";
@@ -48,7 +48,7 @@ export class SpinController {
   private enabled = false;
   private holding = false;
   private pointerId: number | null = null;
-  private tracker = new ShakeTracker();
+  private flick = new FlickDetector();
   private reader = new MotionReader();
   private pointer: PointerSample[] = [];
   private tick: ReturnType<typeof setInterval> | undefined;
@@ -159,10 +159,10 @@ export class SpinController {
         clearTimeout(timeout);
         this.setMotion("active");
       }
-      this.tracker.screenAngle = angle;
       if (!this.holding) return;
       this.push(twistWheel(this.wheel, sample.rz ?? 0));
-      if (this.tracker.push(sample)) this.flicked(this.tracker.throwInput().speed, "motion");
+      const strength = this.flick.push(sample);
+      if (strength !== null) this.flicked(strength, "motion");
     });
   }
 
@@ -172,7 +172,7 @@ export class SpinController {
     this.holding = true;
     this.pointerId = e.pointerId;
     this.zone.setPointerCapture(e.pointerId);
-    this.tracker.reset();
+    this.flick.reset();
     this.pointer = [{ t: e.timeStamp, x: e.clientX, y: e.clientY }];
     this.cb.onHoldChange(true);
   }
@@ -244,8 +244,9 @@ export class SpinController {
   private flicked(strength: number, source: SpinInput["source"]) {
     if (!this.holding) return;
     if (!this.ready) {
-      this.endHold();
+      // Keep holding: a jerk while getting the wheel going shouldn't cost you the grip.
       this.cb.onHint(this.motion === "active" ? "Spin the wheel first: twist your phone" : "Spin the wheel first: drag sideways");
+      if (source !== "motion") this.endHold();
       return;
     }
     this.endHold();
@@ -258,7 +259,7 @@ export class SpinController {
     this.holding = false;
     if (this.pointerId !== null && this.zone.hasPointerCapture(this.pointerId)) this.zone.releasePointerCapture(this.pointerId);
     this.pointerId = null;
-    this.tracker.reset();
+    this.flick.reset();
     this.cb.onHoldChange(false);
   }
 }

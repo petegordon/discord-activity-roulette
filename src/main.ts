@@ -116,8 +116,18 @@ async function boot() {
     }
   } else {
     roomId = standaloneRoom();
-    const name = storedName() ?? (await ui.askName(""));
-    storeName(name);
+    let name = storedName();
+    if (!name) {
+      name = await ui.askName("");
+      storeName(name);
+      // iOS "Shake to Undo" keeps offering to undo the name typing even after the field is gone,
+      // and pops up on every twist and flick. A reload (same room, name now saved) starts a page
+      // with no typing history. Skipped if storage doesn't work, so it can't loop.
+      if (storedName() === name) {
+        location.reload();
+        return;
+      }
+    }
     self = { ...(await newIdentity()), name };
   }
   ui.removeNamePrompt(); // no-op if already gone; see removeNamePrompt

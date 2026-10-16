@@ -37,7 +37,7 @@ It's a sibling of [discord-activity-dice](https://github.com/petegordon/discord-
 
 ### 2.1 Input (`src/input/controller.ts`, `src/input/motion.ts`)
 1. **Twist.** While holding the zone, the gyroscope's rotation about the axis out of the screen (`rotationRate.alpha`) drives the wheel like a **ratchet**. Twisting faster than the wheel turns speeds it up. Twisting back to wind up again is ignored while the wheel moves, so repeated twists build speed. Otherwise the wheel coasts with friction. The wheel's speed is broadcast as `twist` (~15 Hz), so everyone sees it spin up live.
-2. **Flick.** When you've twisted the wheel this turn **and** it turns at least 1 rad/s, the zone says **NOW FLICK!** (with a buzz). A flick, detected by the dice game's spike-then-stillness detector (`ShakeTracker`), launches the ball. Its strength sets how long the ball runs. Flicking first, or with a wheel that's only coasting from the last spin, shows a hint instead.
+2. **Flick.** When you've twisted the wheel this turn **and** it turns at least 1 rad/s, the zone says **NOW FLICK!** (with a buzz). Any sharp jerk of the phone, in any direction, of about 1.3 g or more launches the ball (`FlickDetector`). Its strength sets how long the ball runs. Unlike the dice throw, it needs no stillness afterwards and no particular direction. Jerks while twisting hard (or within 120 ms of it) are ignored. Flicking too early shows a hint and keeps your hold.
 3. **Without motion** (fallback where motion permission is pending or denied): drag sideways on the zone to spin the wheel, then flick upward. Desktops and Discord use the phone remote (§4) or **Quick spin**.
 
 ### 2.2 Fair, identical results (`src/wheel/spin.ts`)
