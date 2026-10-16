@@ -78,7 +78,7 @@ Discord doesn't let Activities read motion sensors, so any phone can spin for a 
 | Multiplayer betting & spins, chips conserved, all players agree | ✅ e2e (`scripts/e2e.mjs`), relay and PeerJS |
 | Real phones | 🟡 Not yet tried. Twist uses `rotationRate.alpha`; confirm on iPhone and Android that it's the screen-normal axis |
 | Discord Activity | 🟡 Needs a Discord application (ID + secret) and URL mappings, as for the dice app |
-| Deploy to roulette.housetandem.com | See README |
+| Deploy | ✅ Live at https://roulette.housetandem.com (also https://discord-activity-roulette.pete-872.workers.dev); e2e passes against production on both transports |
 
 ## 7. Ideas not in v1 (need a design decision first)
 - Split/street/corner bets, "repeat last bet", a bet timer, and per-player win streak callouts.
