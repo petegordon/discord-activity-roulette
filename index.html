@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f1a14" />
+    <meta name="description" content="Roulette with friends: twist your phone to spin a 3D wheel, flick to launch the ball. Play chips only." />
+    <title>Roulette</title>
+    <meta property="og:title" content="Roulette" />
+    <meta property="og:description" content="Twist your phone to spin the wheel and flick to launch the ball, with friends on the web or in Discord. Play chips only." />
+    <meta property="og:image" content="https://roulette.housetandem.com/screenshots/desktop.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/boot-guard.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div id="stage"></div>
+
+      <header class="topbar">
+        <div class="room">
+          <span class="room-label">Room</span>
+          <span id="room-code" class="room-code">…</span>
+          <button id="copy-invite" class="chip-btn" type="button" hidden>Copy invite</button>
+        </div>
+        <div class="top-actions">
+          <button id="remote-btn" class="icon-btn" type="button" aria-label="Spin with your phone" title="Spin with your phone" hidden>📱</button>
+          <button id="mute" class="icon-btn" type="button" aria-label="Mute sounds">🔊</button>
+        </div>
+      </header>
+      <ul id="players" class="players" aria-label="Players"></ul>
+      <div id="banner" class="banner" aria-live="polite"></div>
+
+      <div id="callout" class="callout" aria-live="assertive">
+        <div class="callout-main"></div>
+        <div class="callout-sub"></div>
+      </div>
+
+      <footer class="bottom">
+        <div id="hint" class="hint" aria-live="polite"></div>
+        <section id="board-wrap" class="board-wrap" aria-label="Betting table" hidden>
+          <div class="board-head">
+            <ol id="recent" class="recent" aria-label="Recent numbers"></ol>
+            <div id="my-stake" class="my-stake"></div>
+          </div>
+          <div id="board" class="board"></div>
+          <div class="chip-row">
+            <div id="chips" class="chips" role="radiogroup" aria-label="Chip value"></div>
+            <button id="undo-bet" class="secondary small" type="button">Undo</button>
+            <button id="clear-bets" class="secondary small" type="button">Clear</button>
+          </div>
+        </section>
+        <div class="actions">
+          <button id="enable-motion" class="secondary" type="button" hidden>📳 Enable motion to spin</button>
+          <div id="zone" class="zone" role="button" tabindex="0" aria-label="Hold and twist to spin the wheel">
+            <div class="zone-title"></div>
+            <div class="zone-sub"></div>
+          </div>
+          <button id="use-phone" class="primary" type="button" hidden>📱 Spin with your phone</button>
+          <button id="quick-spin" class="secondary small" type="button" hidden>Quick spin</button>
+        </div>
+      </footer>
+
+      <section id="lobby" class="card-layer" hidden>
+        <div class="card">
+          <h1>Roulette</h1>
+          <p class="rules">
+            Everyone starts with <b>1,000 chips</b> and bets at the same time. Take turns spinning: <b>twist your phone</b> to spin the wheel,
+            then <b>flick it</b> to launch the ball. Most chips at the end wins.
+          </p>
+          <ul id="lobby-players" class="lobby-players"></ul>
+          <div id="host-controls">
+            <label class="target"
+              >Play
+              <select id="rounds"></select>
+              spins
+            </label>
+            <button id="start" class="primary" type="button">Start game</button>
+          </div>
+          <p id="lobby-wait" class="muted">Waiting for the host to start…</p>
+          <button id="lobby-phone" class="secondary" type="button" hidden>📱 Spin with your phone</button>
+          <p class="muted small">Play chips only. No real money, no prizes.</p>
+          <p id="legal-links" class="legal"><a href="/terms" target="_blank" rel="noopener">Terms</a> · <a href="/privacy" target="_blank" rel="noopener">Privacy</a></p>
+        </div>
+      </section>
+
+      <section id="match-over" class="card-layer" hidden>
+        <div class="card">
+          <div class="trophy">🏆</div>
+          <h1 id="winner"></h1>
+          <ul id="final-scores" class="lobby-players"></ul>
+          <button id="rematch" class="primary" type="button">Rematch</button>
+          <p id="rematch-wait" class="muted">Waiting for the host…</p>
+        </div>
+      </section>
+
+      <section id="name-prompt" class="card-layer" hidden>
+        <form class="card" id="name-form">
+          <h1>Roulette</h1>
+          <label for="name-input">Your name</label>
+          <input id="name-input" maxlength="24" autocomplete="nickname" required />
+          <button class="primary" type="submit">Join table</button>
+        </form>
+      </section>
+
+      <section id="pair" class="card-layer" hidden>
+        <div class="card pair-card" role="dialog" aria-modal="true" aria-labelledby="pair-title">
+          <h1 id="pair-title">📱 Spin with your phone</h1>
+          <p id="pair-why" class="muted"></p>
+          <div id="pair-qr" class="qr" aria-label="QR code for the phone link"></div>
+          <code id="pair-link" class="pair-link"></code>
+          <div class="pair-row">
+            <button id="pair-copy" class="secondary" type="button">Copy link</button>
+            <button id="pair-open" class="secondary" type="button" hidden>Open on this phone</button>
+          </div>
+          <p id="pair-status" class="pair-status"></p>
+          <p class="pair-warn">Anyone with this code can spin for you. Don't show it on a stream.</p>
+          <div class="pair-row">
+            <button id="pair-new" class="secondary small" type="button">New link</button>
+            <button id="pair-unpair" class="secondary small" type="button">Unpair</button>
+            <button id="pair-close" class="primary" type="button">Done</button>
+          </div>
+        </div>
+      </section>
+
+      <div id="status" class="status" hidden></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
