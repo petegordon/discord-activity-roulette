@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f1a14" />
+    <meta name="description" content="Learn to spin the roulette wheel with your phone: twist to spin, flick to launch the ball." />
+    <title>Learn to Spin · Roulette</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/boot-guard.js"></script>
+  </head>
+  <body>
+    <div id="app" class="practice">
+      <header class="p-top">
+        <a class="p-back" href="/">← Table</a>
+        <ol id="p-steps" class="p-steps" aria-label="Lessons">
+          <li data-lesson="hold">Hold</li>
+          <li data-lesson="twist">Twist</li>
+          <li data-lesson="flick">Flick</li>
+          <li data-lesson="blind">By ear</li>
+        </ol>
+        <button id="p-voice" class="p-icon" type="button" aria-label="Turn spoken coaching off">🗣️</button>
+      </header>
+
+      <div id="stage" class="p-stage">
+        <div id="p-callout" class="r-callout" aria-live="assertive">
+          <div class="callout-main"></div>
+          <div class="callout-sub"></div>
+        </div>
+      </div>
+
+      <section class="p-lesson">
+        <div id="p-demo" class="demo" aria-hidden="true">
+          <div class="demo-wheel"></div>
+          <div class="demo-rig">
+            <div class="demo-phone">
+              <div class="demo-screen"><div class="demo-pad"></div></div>
+            </div>
+            <div class="demo-thumb"></div>
+          </div>
+          <div class="demo-streaks"><i></i><i></i><i></i></div>
+          <div class="demo-ball"></div>
+          <div class="demo-chime">🔔</div>
+          <div class="demo-snap">SNAP!</div>
+        </div>
+        <div class="p-text">
+          <h1 id="p-title"></h1>
+          <p id="p-body"></p>
+          <button id="p-replay" class="p-link" type="button">▶ Show me again</button>
+        </div>
+      </section>
+
+      <div id="zone" class="r-pad p-pad" role="button" tabindex="0" aria-label="Hold here">
+        <div class="zone-title"></div>
+        <div class="zone-sub"></div>
+        <div class="p-meter" aria-hidden="true"><div id="p-meter-fill" class="p-meter-fill"></div><div class="p-meter-mark"></div></div>
+        <div id="p-hint" class="r-hint" aria-live="polite"></div>
+      </div>
+
+      <section id="p-start" class="r-layer">
+        <div class="r-card">
+          <div class="r-big">🎓</div>
+          <h1>Learn to spin</h1>
+          <p>
+            You'll <b>twist</b> your phone to spin the wheel, then <b>flick</b> it to throw the ball. While you twist you can't really watch the
+            screen, so this teaches you to spin <b>by ear</b>. Turn your volume up (on iPhone, turn Silent Mode off: it mutes web pages).
+          </p>
+          <button id="p-go" class="primary" type="button">Start</button>
+          <p id="p-start-note" class="r-small">On iPhone, allow motion access when asked.</p>
+        </div>
+      </section>
+
+      <section id="p-done" class="r-layer" hidden>
+        <div class="r-card">
+          <div class="r-big">🏆</div>
+          <h1>You're ready!</h1>
+          <p>Thumb down, twist until the chime, flick. At the table it works the same, with the same sounds.</p>
+          <a class="primary p-button" href="/">Back to the table</a>
+          <button id="p-again" class="p-link" type="button">Keep practicing</button>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/src/practice/main.ts"></script>
+  </body>
+</html>

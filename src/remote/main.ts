@@ -1,4 +1,5 @@
 import "./remote.css";
+import { WheelAudio } from "../audio";
 import { createGame, type GameState } from "../game/roulette";
 import { SpinController } from "../input/controller";
 import { playerIdFromKey } from "../net/identityKey";
@@ -56,6 +57,16 @@ function boot() {
   }
 
   const zone = $("zone");
+  // The ticks and the "flick now" chime: the cues you spin by while the screen is turned away.
+  const audio = new WheelAudio();
+  const paintMute = () => ($("r-mute").textContent = audio.muted ? "🔇" : "🔊");
+  paintMute();
+  $("r-mute").addEventListener("click", () => {
+    audio.setMuted(!audio.muted);
+    audio.unlock();
+    paintMute();
+  });
+  document.addEventListener("pointerdown", () => audio.unlock(), { capture: true });
   let room: Room | null = null;
   let selfId = "";
   let players: Player[] = [];
@@ -93,6 +104,7 @@ function boot() {
     lastFrame = now;
     dialAngle += dialRate * dt;
     dial.style.transform = `rotate(${(-dialAngle * 180) / Math.PI}deg)`;
+    if (!spinning) audio.wheel(dialRate);
     requestAnimationFrame(spinDial);
   };
   requestAnimationFrame(spinDial);
@@ -105,6 +117,7 @@ function boot() {
       paintWheel(rate);
     },
     onLaunch: (input) => {
+      audio.launch(input.ball);
       awaitingAck = setTimeout(() => {
         awaitingAck = undefined;
         hint("The table didn't catch that. Try again.");
@@ -117,7 +130,10 @@ function boot() {
     onHoldChange: (holding) => zone.classList.toggle("holding", holding),
     onMotionState: () => render(),
     onStep: (step) => {
-      if (step === "flick" && "vibrate" in navigator) navigator.vibrate([30, 40, 30]);
+      if (step === "flick") {
+        audio.ready();
+        if ("vibrate" in navigator) navigator.vibrate([30, 40, 30]);
+      }
       render();
     },
   });

@@ -1,0 +1,519 @@
+/* Learn to spin (practice.html). Builds on remote.css. */
+
+.practice {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: calc(var(--safe-top) + 10px) 16px calc(var(--safe-bottom) + 12px);
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+}
+
+.p-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.p-back {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.p-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+}
+
+.p-steps li {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.p-steps li.current {
+  background: var(--gold);
+  color: #1d1606;
+  font-weight: 800;
+}
+
+.p-steps li.done {
+  color: var(--hit);
+}
+
+.p-steps li.done::before {
+  content: "✓ ";
+}
+
+.p-icon {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.p-stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 140px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.p-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.p-stage .r-callout {
+  inset: 18% 0 auto;
+  z-index: 1;
+}
+
+.p-lesson {
+  flex: none;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.p-text h1 {
+  margin: 0 0 4px;
+  font-size: 19px;
+}
+
+.p-text p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.p-link {
+  margin-top: 6px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.p-button {
+  display: block;
+  text-decoration: none;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-weight: 800;
+  font-size: 18px;
+  background: var(--gold);
+  color: #1d1606;
+}
+
+/* The pad: the same hold-and-twist target as the remote, with a speed meter. */
+.p-pad {
+  flex: 1 1 0;
+  min-height: 170px;
+  position: relative;
+}
+
+.p-meter {
+  position: relative;
+  width: min(260px, 80%);
+  height: 10px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.p-meter-fill {
+  height: 100%;
+  width: 0;
+  background: var(--muted);
+  transition: width 0.1s linear;
+}
+
+.p-ready .p-meter-fill {
+  background: var(--hit);
+}
+
+/* The wheel is fast enough past here (WHEEL_READY). */
+.p-meter-mark {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--gold);
+}
+
+.p-pad .r-hint {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+}
+
+/* ---- the demo: a phone in a hand, looping the move ---- */
+
+.demo {
+  --skin: #e0ac7e;
+  position: relative;
+  width: 120px;
+  height: 150px;
+  border-radius: 16px;
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.demo-wheel {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #6b3f1d;
+  background:
+    radial-gradient(circle, #d8b25a 0 10%, #5a3518 11% 50%, transparent 51%),
+    repeating-conic-gradient(#b3172a 0 9.73deg, #1c1714 9.73deg 19.46deg);
+}
+
+.demo-rig {
+  position: absolute;
+  left: 34px;
+  top: 40px;
+  width: 52px;
+  height: 94px;
+  transform-origin: 50% 55%;
+}
+
+.demo-phone {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: #222;
+  border: 2px solid #555;
+  padding: 5px 4px;
+}
+
+.demo-screen {
+  position: relative;
+  height: 100%;
+  border-radius: 5px;
+  background: #16231c;
+}
+
+.demo-pad {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  height: 42%;
+  border-radius: 6px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.35);
+}
+
+.demo-thumb {
+  position: absolute;
+  left: 15px;
+  top: 52px;
+  width: 22px;
+  height: 30px;
+  border-radius: 50% 50% 45% 45%;
+  background: var(--skin);
+  box-shadow: inset -3px -4px 0 rgba(0, 0, 0, 0.12);
+}
+
+.demo-ball {
+  position: absolute;
+  left: 55px;
+  top: 34px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fbfaf5;
+  opacity: 0;
+}
+
+.demo-streaks {
+  position: absolute;
+  left: 36px;
+  top: 22px;
+  width: 48px;
+  height: 14px;
+  display: flex;
+  justify-content: space-between;
+  opacity: 0;
+}
+
+.demo-streaks i {
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+.demo-streaks i:nth-child(1) {
+  rotate: -25deg;
+}
+
+.demo-streaks i:nth-child(3) {
+  rotate: 25deg;
+}
+
+.demo-chime {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  font-size: 22px;
+  opacity: 0;
+}
+
+.demo-snap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--gold);
+  opacity: 0;
+}
+
+.demo > *,
+.demo-pad,
+.demo-thumb {
+  animation-duration: 3.2s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+/* 1 · Hold: the thumb comes down on the pad and stays. */
+.demo-hold .demo-thumb {
+  animation-name: thumb-down;
+}
+
+.demo-hold .demo-pad {
+  animation-name: pad-glow;
+}
+
+@keyframes thumb-down {
+  0% { translate: 26px 40px; opacity: 0; }
+  25% { translate: 0 0; opacity: 1; scale: 1; }
+  32%, 100% { translate: 0 0; opacity: 1; scale: 0.92; }
+}
+
+@keyframes pad-glow {
+  0%, 30% { background: transparent; border-color: rgba(255, 255, 255, 0.35); }
+  34%, 100% { background: rgba(242, 193, 78, 0.3); border-color: var(--gold); }
+}
+
+/* 2 · Twist: three quick turns like a dial (winding back slowly between), the wheel speeds up, then the chime. */
+.demo-twist .demo-rig {
+  animation-name: twist;
+}
+
+.demo-twist .demo-wheel {
+  animation-name: wheel-up;
+  animation-timing-function: linear;
+}
+
+.demo-twist .demo-chime {
+  animation-name: chime-late;
+}
+
+.demo-twist .demo-pad,
+.demo-flick .demo-pad,
+.demo-blind .demo-pad {
+  background: rgba(242, 193, 78, 0.3);
+  border-color: var(--gold);
+}
+
+.demo-twist .demo-thumb,
+.demo-flick .demo-thumb,
+.demo-blind .demo-thumb {
+  scale: 0.92;
+}
+
+@keyframes twist {
+  0% { rotate: 0deg; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  9% { rotate: -60deg; animation-timing-function: ease-in-out; }
+  28% { rotate: 0deg; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  37% { rotate: -60deg; animation-timing-function: ease-in-out; }
+  56% { rotate: 0deg; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  65% { rotate: -60deg; animation-timing-function: ease-in-out; }
+  84%, 100% { rotate: 0deg; }
+}
+
+@keyframes wheel-up {
+  0% { rotate: 0deg; }
+  28% { rotate: -80deg; }
+  56% { rotate: -280deg; }
+  84% { rotate: -640deg; }
+  100% { rotate: -880deg; }
+}
+
+@keyframes chime-late {
+  0%, 88% { opacity: 0; scale: 0.6; }
+  92%, 100% { opacity: 1; scale: 1; }
+}
+
+/* 3 · Flick: chime, cock the wrist back, snap it forward, ball away. */
+.demo-flick .demo-rig {
+  animation-name: flick;
+}
+
+.demo-flick .demo-wheel {
+  animation-name: wheel-steady;
+  animation-timing-function: linear;
+}
+
+.demo-flick .demo-chime {
+  animation-name: chime-early;
+}
+
+.demo-flick .demo-ball {
+  animation-name: ball-away;
+}
+
+.demo-flick .demo-streaks {
+  animation-name: streaks;
+}
+
+.demo-flick .demo-snap {
+  animation-name: snap;
+}
+
+@keyframes flick {
+  0%, 12% { transform: perspective(260px) rotateX(0deg) translateY(0); animation-timing-function: ease-in-out; }
+  38% { transform: perspective(260px) rotateX(32deg) translateY(4px); animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.4); }
+  44% { transform: perspective(260px) rotateX(-38deg) translateY(-12px); }
+  62% { transform: perspective(260px) rotateX(-38deg) translateY(-12px); animation-timing-function: ease-in-out; }
+  90%, 100% { transform: perspective(260px) rotateX(0deg) translateY(0); }
+}
+
+@keyframes wheel-steady {
+  from { rotate: 0deg; }
+  to { rotate: -900deg; }
+}
+
+@keyframes chime-early {
+  0% { opacity: 0; scale: 0.6; }
+  6%, 36% { opacity: 1; scale: 1; }
+  42%, 100% { opacity: 0; }
+}
+
+@keyframes ball-away {
+  0%, 43% { opacity: 0; translate: 0 0; scale: 1; }
+  45% { opacity: 1; translate: 0 0; scale: 1; }
+  70%, 100% { opacity: 0; translate: -20px -36px; scale: 0.5; }
+}
+
+@keyframes streaks {
+  0%, 43% { opacity: 0; }
+  45%, 54% { opacity: 1; }
+  62%, 100% { opacity: 0; }
+}
+
+@keyframes snap {
+  0%, 43% { opacity: 0; scale: 0.7; }
+  46%, 66% { opacity: 1; scale: 1; }
+  74%, 100% { opacity: 0; }
+}
+
+/* 4 · By ear: the whole move with the screen turned away. Two twists, the chime, the flick. */
+.demo-blind .demo-screen::after {
+  content: "👂";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 8px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.demo-blind .demo-rig {
+  animation-name: blind;
+}
+
+.demo-blind .demo-wheel {
+  animation-name: wheel-up;
+  animation-timing-function: linear;
+}
+
+.demo-blind .demo-chime {
+  animation-name: chime-mid;
+}
+
+.demo-blind .demo-ball {
+  animation-name: ball-away-late;
+}
+
+.demo-blind .demo-streaks {
+  animation-name: streaks-late;
+}
+
+@keyframes blind {
+  0% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  9% { transform: rotate(-60deg); animation-timing-function: ease-in-out; }
+  26% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  35% { transform: rotate(-60deg); animation-timing-function: ease-in-out; }
+  52%, 60% { transform: rotate(0deg) perspective(260px) rotateX(0deg); animation-timing-function: ease-in-out; }
+  74% { transform: rotate(0deg) perspective(260px) rotateX(32deg); animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.4); }
+  80%, 88% { transform: rotate(0deg) perspective(260px) rotateX(-38deg) translateY(-12px); animation-timing-function: ease-in-out; }
+  100% { transform: rotate(0deg) perspective(260px) rotateX(0deg); }
+}
+
+@keyframes chime-mid {
+  0%, 56% { opacity: 0; scale: 0.6; }
+  60%, 76% { opacity: 1; scale: 1; }
+  80%, 100% { opacity: 0; }
+}
+
+@keyframes ball-away-late {
+  0%, 79% { opacity: 0; translate: 0 0; scale: 1; }
+  81% { opacity: 1; translate: 0 0; scale: 1; }
+  96%, 100% { opacity: 0; translate: -20px -36px; scale: 0.5; }
+}
+
+@keyframes streaks-late {
+  0%, 79% { opacity: 0; }
+  81%, 88% { opacity: 1; }
+  94%, 100% { opacity: 0; }
+}
+
+/* Short phones: a smaller wheel, keep the pad big. */
+@media (max-height: 640px) {
+  .p-stage {
+    min-height: 100px;
+  }
+  .p-text p {
+    font-size: 13px;
+  }
+}
+
+.p-pad.waiting .p-meter {
+  visibility: hidden;
+}

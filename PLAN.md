@@ -40,6 +40,17 @@ It's a sibling of [discord-activity-dice](https://github.com/petegordon/discord-
 2. **Flick.** When you've twisted the wheel this turn **and** it turns at least 1 rad/s, the zone says **NOW FLICK!** (with a buzz). Any sharp jerk of the phone, in any direction, of about 1.3 g or more launches the ball (`FlickDetector`). Its strength sets how long the ball runs. Unlike the dice throw, it needs no stillness afterwards and no particular direction. Jerks while twisting hard (or within 120 ms of it) are ignored. Flicking too early shows a hint and keeps your hold.
 3. **Without motion** (fallback where motion permission is pending or denied): drag sideways on the zone to spin the wheel, then flick upward. Desktops and Discord use the phone remote (§4) or **Quick spin**.
 
+### 2.1a Cues you can hear, and Learn to spin (`/practice`)
+While twisting, the spinner usually can't see the screen, and iPhones can't vibrate from a web page. So the spin is built to be followed **by ear**. The wheel ticks faster as it speeds up. A rising two-note **chime** (`WheelAudio.ready`) means "flick now", and a **whoosh** confirms the launch. The game page and the phone remote play the same sounds.
+
+**Learn to spin** (`practice.html`, `src/practice/`) is a local practice wheel with no room and no network. It's linked from the lobby and the remote's start card, and is hidden inside Discord, where motion is blocked. It has four lessons:
+1. **Hold**: keep a thumb on the pad.
+2. **Twist**: until the chime.
+3. **Flick**: launches a real spin on the 3D wheel.
+4. **By ear**: two spins with only the game's own cues.
+
+Each lesson loops a CSS demo animation (a phone in a hand, plus a mini wheel), plays the matching sounds, and gives spoken coaching (`speechSynthesis`, toggle 🗣️). If the twist isn't working, `twistTip` (`src/practice/coach.ts`) reads raw rotation and acceleration and says why: tipping the phone instead of dialling it, shaking it, or twisting too gently. `scripts/e2e-practice.mjs` walks every lesson with synthetic motion.
+
 ### 2.2 Fair, identical results (`src/wheel/spin.ts`)
 - The host picks the pocket with `crypto.getRandomValues` (rejection sampling, so every pocket is exactly 1/37). The gesture only shapes how the spin *looks*.
 - The host broadcasts `spun { plan: { pocket, wheel, ball, seed }, game, landsInMs }`. `game` is the settled state, shown only once the ball lands.
@@ -76,6 +87,7 @@ Discord doesn't let Activities read motion sensors, so any phone can spin for a 
 | Ball path lands in the host's pocket for any wheel angle/direction/speed/seed | ✅ Unit-tested |
 | Twist ratchet, flick launch, phone remote | ✅ e2e with synthetic DeviceMotion (`scripts/e2e-remote.mjs`), relay and PeerJS |
 | Multiplayer betting & spins, chips conserved, all players agree | ✅ e2e (`scripts/e2e.mjs`), relay and PeerJS |
+| Learn to spin (`/practice`) | ✅ e2e with synthetic DeviceMotion (`scripts/e2e-practice.mjs`); coaching tips unit-tested |
 | Real phones | 🟡 Not yet tried. Twist uses `rotationRate.alpha`; confirm on iPhone and Android that it's the screen-normal axis |
 | Discord Activity | 🟡 Needs a Discord application (ID + secret) and URL mappings, as for the dice app |
 | Deploy | ✅ Live at https://roulette.housetandem.com (also https://discord-activity-roulette.pete-872.workers.dev); e2e passes against production on both transports |

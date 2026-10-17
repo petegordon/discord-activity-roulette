@@ -82,6 +82,52 @@ export class WheelAudio {
     this.click(2400 + Math.random() * 900, 0.08 + strength * 0.3, 0.05);
   }
 
+  /**
+   * Two rising notes: the wheel is going fast enough, flick now. It's the cue
+   * to listen for, since the spinner usually can't see the screen (and iPhones
+   * can't vibrate from a web page).
+   */
+  ready() {
+    this.tone(880, 0, 0.14);
+    this.tone(1318.5, 0.12, 0.3);
+  }
+
+  /** The ball leaving your hand: a whoosh, brighter for a harder flick. */
+  launch(strength: number) {
+    if (this.muted || !this.ctx || !this.noise || this.ctx.state !== "running") return;
+    const ctx = this.ctx;
+    const t = ctx.currentTime;
+    const src = ctx.createBufferSource();
+    src.buffer = this.noise;
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.Q.value = 1.5;
+    filter.frequency.setValueAtTime(500, t);
+    filter.frequency.exponentialRampToValueAtTime(1500 + strength * 2500, t + 0.22);
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(0.25 + strength * 0.25, t + 0.04);
+    env.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+    src.connect(filter).connect(env).connect(ctx.destination);
+    src.start(t, 0, 0.35);
+  }
+
+  private tone(freq: number, delay: number, dur: number) {
+    if (this.muted || !this.ctx || this.ctx.state !== "running") return;
+    const ctx = this.ctx;
+    const t = ctx.currentTime + delay;
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(0.22, t + 0.01);
+    env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(env).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+  }
+
   private click(freq: number, gain: number, dur: number) {
     if (this.muted || !this.ctx || !this.noise || this.ctx.state !== "running") return;
     const ctx = this.ctx;

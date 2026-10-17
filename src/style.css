@@ -528,7 +528,13 @@ input {
   outline-offset: 2px;
 }
 
-.chip-row button.small {
+.chip-row .learn {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+button.small {
   align-self: auto;
 }
 

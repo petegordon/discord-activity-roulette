@@ -88,6 +88,22 @@ button {
   gap: 8px;
 }
 
+.r-icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.r-learn {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .r-conn {
   flex: none;
   font-size: 12px;

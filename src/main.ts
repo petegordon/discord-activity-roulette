@@ -134,6 +134,8 @@ async function boot() {
   ui.setRoom(roomId, !inDiscord);
   // Discord lists the Terms and Privacy links on the app's own page; plain links can't leave the Activity frame.
   document.getElementById("legal-links")!.hidden = inDiscord;
+  // Motion is blocked in Discord; there the 📱 remote page has the same link.
+  document.getElementById("learn")!.hidden = inDiscord;
 
   ui.status({ kind: "connecting" });
   const transport: Transport =
@@ -244,7 +246,10 @@ async function boot() {
       scene.setWheelRate(rate);
       r.twist(rate);
     },
-    onLaunch: (input) => launch(input),
+    onLaunch: (input) => {
+      audio.launch(input.ball);
+      launch(input);
+    },
     onHint: (text) => ui.hint(text),
     onHoldChange: (holding) => {
       ui.setHolding(holding);
@@ -252,7 +257,10 @@ async function boot() {
     },
     onMotionState: () => refresh(),
     onStep: (step) => {
-      if (step === "flick" && "vibrate" in navigator) navigator.vibrate([30, 40, 30]);
+      if (step === "flick") {
+        audio.ready();
+        if ("vibrate" in navigator) navigator.vibrate([30, 40, 30]);
+      }
       refresh();
     },
   });
