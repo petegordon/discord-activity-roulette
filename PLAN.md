@@ -49,7 +49,16 @@ While twisting, the spinner usually can't see the screen, and iPhones can't vibr
 3. **Flick**: launches a real spin on the 3D wheel.
 4. **By ear**: two spins with only the game's own cues.
 
-Each lesson loops a CSS demo animation (a phone in a hand, plus a mini wheel), plays the matching sounds, and gives spoken coaching (`speechSynthesis`, toggle 🗣️). If the twist isn't working, `twistTip` (`src/practice/coach.ts`) reads raw rotation and acceleration and says why: tipping the phone instead of dialling it, shaking it, or twisting too gently. `scripts/e2e-practice.mjs` walks every lesson with synthetic motion.
+Each lesson loops a CSS demo animation (`src/practice/demo.ts`). It shows Pete's grip: thumb on the pad, phone turned screen-down over the wheel, twisted flat like the wheel itself, then the arm thrown right and the wrist snapped. The lesson plays the matching sounds and gives spoken coaching (`speechSynthesis`, toggle 🗣️). **Every twist stroke and every flick is judged soft, good or strong.** The judgement arrives three ways: a tone, a spoken word, and a badge on the pad. A flick under the launch threshold is "too soft". If the twist isn't working, `twistTip` (`src/practice/coach.ts`) reads raw rotation and acceleration and says why: tipping the phone instead of dialling it, shaking it, or twisting too gently. `scripts/e2e-practice.mjs` walks every lesson with synthetic motion.
+
+### 2.1b Calibrate (`/calibrate`) and the motion profile (`src/input/profile.ts`)
+The player shows the page **6 twists** and **5 flicks**, each judged soft, good or strong against the defaults. The page then fits a `MotionProfile` and saves it on the phone (`localStorage` `roulette.motionProfile`). The game, the phone remote and the practice page all load it through `SpinController.profile`. Without calibration, `DEFAULT_PROFILE` holds the tuned defaults.
+- **Twist axis.** The principal axis of the rotation-rate vectors, so any grip works. The default is the screen normal.
+- **Twist gain.** Set so the player's median twist drives the wheel to about 3.2 rad/s. That median becomes "good": soft below 0.7×, strong from 1.35×.
+- **Flick.** The launch threshold is 0.55× the median flick, clamped to 8–22 m/s². It is raised above 1.15× the jolts their own twisting makes, where their flicks allow it. "Good" is the median, and full strength is 1.35× the median.
+- **Twist guard.** Jerks while twisting faster than the guard are ignored. If the player's flick itself turns the phone about the twist axis (screen-down wrist flicks do), the guard is raised above it so their flicks still count.
+
+`scripts/e2e-calibrate.mjs` runs a gentle player through it: 160°/s twists, and 1.1 g flicks that wouldn't launch on the defaults. Afterwards, their own flick launches and is judged GOOD.
 
 ### 2.2 Fair, identical results (`src/wheel/spin.ts`)
 - The host picks the pocket with `crypto.getRandomValues` (rejection sampling, so every pocket is exactly 1/37). The gesture only shapes how the spin *looks*.
@@ -88,6 +97,7 @@ Discord doesn't let Activities read motion sensors, so any phone can spin for a 
 | Twist ratchet, flick launch, phone remote | ✅ e2e with synthetic DeviceMotion (`scripts/e2e-remote.mjs`), relay and PeerJS |
 | Multiplayer betting & spins, chips conserved, all players agree | ✅ e2e (`scripts/e2e.mjs`), relay and PeerJS |
 | Learn to spin (`/practice`) | ✅ e2e with synthetic DeviceMotion (`scripts/e2e-practice.mjs`); coaching tips unit-tested |
+| Calibrate (`/calibrate`) | ✅ e2e with synthetic screen-down motion (`scripts/e2e-calibrate.mjs`); profile fitting, grading, strokes, axis unit-tested |
 | Real phones | 🟡 Not yet tried. Twist uses `rotationRate.alpha`; confirm on iPhone and Android that it's the screen-normal axis |
 | Discord Activity | 🟡 Needs a Discord application (ID + secret) and URL mappings, as for the dice app |
 | Deploy | ✅ Live at https://roulette.housetandem.com (also https://discord-activity-roulette.pete-872.workers.dev); e2e passes against production on both transports |

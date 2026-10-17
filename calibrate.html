@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f1a14" />
+    <meta name="description" content="Show the roulette wheel how you twist and flick, and it tunes the spin to you." />
+    <title>Calibrate · Roulette</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/boot-guard.js"></script>
+  </head>
+  <body>
+    <div id="app" class="practice">
+      <header class="p-top">
+        <a class="p-back" href="/">← Table</a>
+        <ol id="p-steps" class="p-steps" aria-label="Steps">
+          <li data-step="hold">Hold</li>
+          <li data-step="twist">Twist</li>
+          <li data-step="flick">Flick</li>
+          <li data-step="try">Try</li>
+        </ol>
+        <button id="p-voice" class="p-icon" type="button" aria-label="Turn spoken coaching off">🗣️</button>
+      </header>
+
+      <div id="stage" class="p-stage">
+        <div id="p-callout" class="r-callout" aria-live="assertive">
+          <div class="callout-main"></div>
+          <div class="callout-sub"></div>
+        </div>
+      </div>
+
+      <section class="p-lesson">
+        <div id="p-demo" aria-hidden="true"></div>
+        <div class="p-text">
+          <h1 id="p-title"></h1>
+          <p id="p-body"></p>
+          <button id="p-replay" class="p-link" type="button">▶ Show me again</button>
+        </div>
+      </section>
+
+      <div id="zone" class="r-pad p-pad" role="button" tabindex="0" aria-label="Hold here">
+        <div class="zone-title"></div>
+        <div class="zone-sub"></div>
+        <ol id="c-count" class="c-count" aria-label="Moves recorded"></ol>
+        <div id="p-grade" class="p-grade" aria-live="polite"></div>
+        <div id="p-hint" class="r-hint" aria-live="polite"></div>
+      </div>
+
+      <section id="p-start" class="r-layer">
+        <div class="r-card">
+          <div class="r-big">🎯</div>
+          <h1>Calibrate your spin</h1>
+          <p>
+            Show me how <b>you</b> twist and flick, and the game will fit itself to you: your normal twist spins the wheel nicely, and your normal flick
+            throws the ball. I'll call each move <b>soft</b>, <b>good</b> or <b>strong</b> out loud. Turn your volume up (on iPhone, turn Silent Mode off).
+          </p>
+          <button id="p-go" class="primary" type="button">Start</button>
+          <p id="p-start-note" class="r-small">On iPhone, allow motion access when asked.</p>
+          <p id="c-current" class="r-small" hidden>🎯 This phone is already calibrated. Starting again replaces it.</p>
+        </div>
+      </section>
+
+      <section id="c-result" class="r-layer" hidden>
+        <div class="r-card">
+          <div class="r-big">✅</div>
+          <h1>Saved on this phone</h1>
+          <ul id="c-summary" class="c-summary"></ul>
+          <button id="c-try" class="primary" type="button">Try a spin</button>
+          <button id="c-redo" class="p-link" type="button">Do it again</button>
+        </div>
+      </section>
+
+      <section id="p-done" class="r-layer" hidden>
+        <div class="r-card">
+          <div class="r-big">🏆</div>
+          <h1>All set</h1>
+          <p>The game, and the 📱 phone remote on this phone, now spin the way you move.</p>
+          <a class="primary p-button" href="/">Back to the table</a>
+          <button id="c-again" class="p-link" type="button">Keep trying spins</button>
+          <button id="c-reset" class="p-link" type="button">Forget my calibration</button>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/src/calibrate/main.ts"></script>
+  </body>
+</html>

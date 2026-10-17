@@ -92,6 +92,15 @@ export class WheelAudio {
     this.tone(1318.5, 0.12, 0.3);
   }
 
+  /**
+   * How a twist or flick felt, as a quick blip: one low note for too soft,
+   * rising to three bright ones for strong. Distinct from the flick chime.
+   */
+  grade(g: "too-soft" | "soft" | "good" | "strong") {
+    const notes = { "too-soft": [220], soft: [392], good: [523, 659], strong: [659, 784, 1047] }[g];
+    notes.forEach((f, i) => this.tone(f, i * 0.06, 0.09, "triangle"));
+  }
+
   /** The ball leaving your hand: a whoosh, brighter for a harder flick. */
   launch(strength: number) {
     if (this.muted || !this.ctx || !this.noise || this.ctx.state !== "running") return;
@@ -112,12 +121,12 @@ export class WheelAudio {
     src.start(t, 0, 0.35);
   }
 
-  private tone(freq: number, delay: number, dur: number) {
+  private tone(freq: number, delay: number, dur: number, type: OscillatorType = "sine") {
     if (this.muted || !this.ctx || this.ctx.state !== "running") return;
     const ctx = this.ctx;
     const t = ctx.currentTime + delay;
     const osc = ctx.createOscillator();
-    osc.type = "sine";
+    osc.type = type;
     osc.frequency.value = freq;
     const env = ctx.createGain();
     env.gain.setValueAtTime(0, t);

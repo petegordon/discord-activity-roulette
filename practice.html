@@ -30,19 +30,7 @@
       </div>
 
       <section class="p-lesson">
-        <div id="p-demo" class="demo" aria-hidden="true">
-          <div class="demo-wheel"></div>
-          <div class="demo-rig">
-            <div class="demo-phone">
-              <div class="demo-screen"><div class="demo-pad"></div></div>
-            </div>
-            <div class="demo-thumb"></div>
-          </div>
-          <div class="demo-streaks"><i></i><i></i><i></i></div>
-          <div class="demo-ball"></div>
-          <div class="demo-chime">🔔</div>
-          <div class="demo-snap">SNAP!</div>
-        </div>
+        <div id="p-demo" aria-hidden="true"></div>
         <div class="p-text">
           <h1 id="p-title"></h1>
           <p id="p-body"></p>
@@ -54,6 +42,7 @@
         <div class="zone-title"></div>
         <div class="zone-sub"></div>
         <div class="p-meter" aria-hidden="true"><div id="p-meter-fill" class="p-meter-fill"></div><div class="p-meter-mark"></div></div>
+        <div id="p-grade" class="p-grade" aria-live="polite"></div>
         <div id="p-hint" class="r-hint" aria-live="polite"></div>
       </div>
 
@@ -62,11 +51,12 @@
           <div class="r-big">🎓</div>
           <h1>Learn to spin</h1>
           <p>
-            You'll <b>twist</b> your phone to spin the wheel, then <b>flick</b> it to throw the ball. While you twist you can't really watch the
+            You'll <b>twist</b> your phone to spin the wheel, then <b>flick</b> it to throw the ball, holding it screen-down. While you twist you can't really watch the
             screen, so this teaches you to spin <b>by ear</b>. Turn your volume up (on iPhone, turn Silent Mode off: it mutes web pages).
           </p>
           <button id="p-go" class="primary" type="button">Start</button>
           <p id="p-start-note" class="r-small">On iPhone, allow motion access when asked.</p>
+          <p id="p-calibrated" class="r-small" hidden>🎯 Using your calibration. <a href="/calibrate">Recalibrate</a></p>
         </div>
       </section>
 
@@ -77,6 +67,7 @@
           <p>Thumb down, twist until the chime, flick. At the table it works the same, with the same sounds.</p>
           <a class="primary p-button" href="/">Back to the table</a>
           <button id="p-again" class="p-link" type="button">Keep practicing</button>
+          <a class="p-link" href="/calibrate">🎯 Calibrate to how you move</a>
         </div>
       </section>
     </div>

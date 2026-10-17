@@ -99,6 +99,10 @@ button {
 }
 
 .r-learn {
+  margin: 0;
+}
+
+.r-learn a {
   color: var(--gold);
   font-weight: 700;
   text-decoration: none;

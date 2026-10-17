@@ -2,12 +2,16 @@ import { motionEnv, motionVerdict } from "../platform/capabilities";
 import { inDiscord } from "../platform/env";
 import { MAX_WHEEL, normalizeSpin, WHEEL_FRICTION, WHEEL_READY, type SpinInput } from "../wheel/spin";
 import { FlickDetector, MotionReader, twistWheel } from "./motion";
+import { gradeFlick, gradeTwist, loadProfile, StrokeTracker, twistRate, type Grade, type MotionProfile } from "./profile";
 
 /** "blocked": the browser forbids motion in this frame (Discord); "unavailable": no sensors or permission. */
 export type MotionState = "unknown" | "needs-permission" | "active" | "blocked" | "unavailable";
 
 /** The two steps of a spin: get the wheel turning, then launch the ball. */
 export type SpinStep = "twist" | "flick";
+
+/** A twist stroke that drove the wheel, or a flick (or near miss) once the wheel is ready. */
+export type Move = { kind: "twist" | "flick"; grade: Grade; peak: number };
 
 export type ControllerCallbacks = {
   /** The wheel's angular velocity (rad/s), ~15 Hz while it's turning. */
@@ -18,6 +22,8 @@ export type ControllerCallbacks = {
   onMotionState: (state: MotionState) => void;
   /** The wheel crossed WHEEL_READY: time to flick (or it slowed down again). */
   onStep: (step: SpinStep) => void;
+  /** Each move as it's judged, for coaching (practice and calibrate pages). */
+  onMove?: (move: Move) => void;
 };
 
 const TICK_MS = 66;
@@ -48,7 +54,10 @@ export class SpinController {
   private enabled = false;
   private holding = false;
   private pointerId: number | null = null;
-  private flick = new FlickDetector();
+  /** How this player twists and flicks; calibrate.html saves it on the phone. */
+  profile: MotionProfile = loadProfile();
+  private flick = new FlickDetector(() => this.profile);
+  private strokes = new StrokeTracker(() => this.profile.twistNoise);
   private reader = new MotionReader();
   private pointer: PointerSample[] = [];
   private tick: ReturnType<typeof setInterval> | undefined;
@@ -160,9 +169,18 @@ export class SpinController {
         this.setMotion("active");
       }
       if (!this.holding) return;
-      this.push(twistWheel(this.wheel, sample.rz ?? 0));
-      const strength = this.flick.push(sample);
-      if (strength !== null) this.flicked(strength, "motion");
+      const p = this.profile;
+      const rz = sample.r ? twistRate(sample.r, p) : (sample.rz ?? 0);
+      sample.rz = rz;
+      this.push(twistWheel(this.wheel, rz, p));
+      const stroke = this.strokes.push(sample.t, rz);
+      // Winding back for another twist doesn't count; only strokes that turn the wheel its way.
+      if (stroke && (Math.abs(this.wheel) < 0.4 || Math.sign(this.wheel) === stroke.dir)) {
+        this.cb.onMove?.({ kind: "twist", grade: gradeTwist(stroke.peak, p), peak: stroke.peak });
+      }
+      const spike = this.flick.push(sample);
+      if (spike && this.ready) this.cb.onMove?.({ kind: "flick", grade: gradeFlick(spike.peak, p), peak: spike.peak });
+      if (spike?.strength != null) this.flicked(spike.strength, "motion");
     });
   }
 
@@ -173,6 +191,7 @@ export class SpinController {
     this.pointerId = e.pointerId;
     this.zone.setPointerCapture(e.pointerId);
     this.flick.reset();
+    this.strokes.reset();
     this.pointer = [{ t: e.timeStamp, x: e.clientX, y: e.clientY }];
     this.cb.onHoldChange(true);
   }

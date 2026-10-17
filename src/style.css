@@ -528,7 +528,11 @@ input {
   outline-offset: 2px;
 }
 
-.chip-row .learn {
+.chip-row .learn-row {
+  margin: 0;
+}
+
+.learn-row a {
   color: var(--gold);
   font-weight: 700;
   text-decoration: none;

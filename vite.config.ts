@@ -11,7 +11,7 @@ export default defineConfig({
   build: {
     target: "es2022",
     chunkSizeWarningLimit: 1500,
-    // The table, the phone-only spinner remote (SPINNER-REMOTE.md) at /remote, and Learn to spin at /practice.
-    rollupOptions: { input: { main: "index.html", remote: "remote.html", practice: "practice.html" } },
+    // The table, the phone-only spinner remote (SPINNER-REMOTE.md) at /remote, Learn to spin at /practice, and Calibrate at /calibrate.
+    rollupOptions: { input: { main: "index.html", remote: "remote.html", practice: "practice.html", calibrate: "calibrate.html" } },
   },
 });

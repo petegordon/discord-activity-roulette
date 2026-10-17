@@ -1,0 +1,41 @@
+/* Calibrate (calibrate.html). Builds on remote.css and practice.css. */
+
+/* One dot per move recorded. */
+.c-count {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.c-count li {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
+}
+
+.c-count li.got {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.c-summary {
+  margin: 0;
+  padding: 0 0 0 18px;
+  text-align: left;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c-summary b {
+  color: var(--text);
+}
+
+button.primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

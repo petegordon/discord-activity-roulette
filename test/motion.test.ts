@@ -7,8 +7,8 @@ const dt = 1000 / HZ;
 /** Feed samples from `fn(tMs)`; returns the time and strength of the first flick, if any. */
 function feed(d: FlickDetector, from: number, to: number, fn: (t: number) => Partial<MotionSample>) {
   for (let t = from; t < to; t += dt) {
-    const strength = d.push({ t, ax: 0, ay: 0, az: 0, rz: 0, ...fn(t) });
-    if (strength !== null) return { t, strength };
+    const spike = d.push({ t, ax: 0, ay: 0, az: 0, rz: 0, ...fn(t) });
+    if (spike?.strength != null) return { t, strength: spike.strength };
   }
   return null;
 }

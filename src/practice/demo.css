@@ -1,0 +1,356 @@
+/* The move demo (demo.ts): a phone held screen-down over the wheel, seen from the player's eye. */
+
+.demo {
+  --skin: #e0ac7e;
+  --skin-dark: #c8915f;
+  position: relative;
+  width: 120px;
+  height: 150px;
+  border-radius: 16px;
+  background: var(--panel);
+  overflow: hidden;
+  perspective: 340px;
+}
+
+/* Everything on .demo-floor lies flat, like the table. */
+.demo-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6px;
+  height: 130px;
+  transform: rotateX(48deg);
+  transform-style: preserve-3d;
+}
+
+.demo-wheel {
+  position: absolute;
+  left: 18px;
+  top: 22px;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 4px solid #6b3f1d;
+  background:
+    radial-gradient(circle, #d8b25a 0 8%, #5a3518 9% 50%, transparent 51%),
+    repeating-conic-gradient(#b3172a 0 9.73deg, #1c1714 9.73deg 19.46deg);
+  opacity: 0.85;
+}
+
+.demo-rig {
+  position: absolute;
+  left: 42px;
+  top: 26px;
+  width: 36px;
+  height: 64px;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  translate: 0 0 14px;
+}
+
+.demo-arm {
+  position: absolute;
+  left: 8px;
+  top: 48px;
+  width: 20px;
+  height: 90px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--skin-dark), var(--skin));
+}
+
+.demo-flipper {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+}
+
+.demo-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.demo-front {
+  background: #16231c;
+  border: 2px solid #555;
+}
+
+.demo-pad {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  height: 45%;
+  border-radius: 4px;
+  border: 1.5px solid var(--gold);
+  background: rgba(242, 193, 78, 0.3);
+}
+
+.demo-thumb {
+  position: absolute;
+  left: 9px;
+  bottom: 6px;
+  width: 15px;
+  height: 20px;
+  border-radius: 50% 50% 45% 45%;
+  background: var(--skin);
+}
+
+/* The back of the phone, with the fingers wrapped over it. */
+.demo-back {
+  transform: rotateY(180deg);
+  background: #3a3f46;
+  border: 2px solid #22262b;
+}
+
+.demo-camera {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: #15181b;
+}
+
+.demo-back i {
+  position: absolute;
+  left: -3px;
+  right: 6px;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--skin);
+  box-shadow: inset 0 -2px 0 var(--skin-dark);
+}
+
+.demo-back i:nth-of-type(1) { top: 22px; }
+.demo-back i:nth-of-type(2) { top: 31px; }
+.demo-back i:nth-of-type(3) { top: 40px; }
+.demo-back i:nth-of-type(4) { top: 49px; right: 10px; }
+
+.demo-ball {
+  position: absolute;
+  left: 92px;
+  top: 30px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fbfaf5;
+  opacity: 0;
+}
+
+.demo-streaks {
+  position: absolute;
+  left: 78px;
+  top: 20px;
+  width: 22px;
+  height: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+}
+
+.demo-streaks i {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+.demo-chime {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  font-size: 20px;
+  opacity: 0;
+}
+
+.demo-snap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--gold);
+  opacity: 0;
+}
+
+.demo-label {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  background: rgba(10, 16, 12, 0.8);
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.demo .demo-rig,
+.demo .demo-flipper,
+.demo .demo-wheel,
+.demo .demo-ball,
+.demo .demo-streaks,
+.demo .demo-chime,
+.demo .demo-snap {
+  animation-duration: 3.2s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+/* Hold: thumb on the pad, then turn the phone over, screen to the floor. */
+.demo-hold .demo-flipper {
+  animation-name: flip-down;
+}
+
+@keyframes flip-down {
+  0%, 30% { transform: rotateY(0deg); }
+  60%, 100% { transform: rotateY(180deg); }
+}
+
+/* Twist: three quick turns (winding back slowly between), the wheel speeds up, then the chime. */
+.demo-twist .demo-rig {
+  animation-name: twist;
+}
+
+.demo-twist .demo-wheel,
+.demo-blind .demo-wheel {
+  animation-name: wheel-up;
+  animation-timing-function: linear;
+}
+
+.demo-twist .demo-chime {
+  animation-name: chime-late;
+}
+
+@keyframes twist {
+  0% { rotate: 0deg; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  9% { rotate: -55deg; animation-timing-function: ease-in-out; }
+  28% { rotate: 0deg; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  37% { rotate: -55deg; animation-timing-function: ease-in-out; }
+  56% { rotate: 0deg; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  65% { rotate: -55deg; animation-timing-function: ease-in-out; }
+  84%, 100% { rotate: 0deg; }
+}
+
+@keyframes wheel-up {
+  0% { rotate: 0deg; }
+  28% { rotate: -80deg; }
+  56% { rotate: -280deg; }
+  84% { rotate: -640deg; }
+  100% { rotate: -880deg; }
+}
+
+@keyframes chime-late {
+  0%, 86% { opacity: 0; scale: 0.6; }
+  90%, 100% { opacity: 1; scale: 1; }
+}
+
+/* Flick: on the chime, cock the hand left, then throw the arm right and snap the wrist; the ball flies off right. */
+.demo-flick .demo-rig {
+  animation-name: throw-right;
+  transform-origin: 50% 120%;
+}
+
+.demo-flick .demo-wheel {
+  animation-name: wheel-steady;
+  animation-timing-function: linear;
+}
+
+.demo-flick .demo-chime {
+  animation-name: chime-early;
+}
+
+.demo-flick .demo-ball {
+  animation-name: ball-right;
+}
+
+.demo-flick .demo-streaks {
+  animation-name: streaks;
+}
+
+.demo-flick .demo-snap {
+  animation-name: snap;
+}
+
+@keyframes throw-right {
+  0%, 22% { translate: 0 0 14px; rotate: 0deg; animation-timing-function: ease-in-out; }
+  38% { translate: -14px 0 14px; rotate: -18deg; animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5); }
+  46% { translate: 16px 0 14px; rotate: 38deg; }
+  62% { translate: 16px 0 14px; rotate: 38deg; animation-timing-function: ease-in-out; }
+  90%, 100% { translate: 0 0 14px; rotate: 0deg; }
+}
+
+@keyframes wheel-steady {
+  from { rotate: 0deg; }
+  to { rotate: -900deg; }
+}
+
+@keyframes chime-early {
+  0% { opacity: 0; scale: 0.6; }
+  6%, 34% { opacity: 1; scale: 1; }
+  40%, 100% { opacity: 0; }
+}
+
+@keyframes ball-right {
+  0%, 44% { opacity: 0; translate: 0 0 30px; }
+  46% { opacity: 1; translate: 0 0 30px; }
+  72%, 100% { opacity: 0; translate: 40px -18px 30px; }
+}
+
+@keyframes streaks {
+  0%, 44% { opacity: 0; translate: 0 0 30px; }
+  47%, 56% { opacity: 1; translate: 6px 0; }
+  64%, 100% { opacity: 0; translate: 14px 0; }
+}
+
+@keyframes snap {
+  0%, 44% { opacity: 0; scale: 0.7; }
+  47%, 66% { opacity: 1; scale: 1; }
+  74%, 100% { opacity: 0; }
+}
+
+/* By ear: two twists, the chime, the throw. */
+.demo-blind .demo-rig {
+  animation-name: blind;
+  transform-origin: 50% 120%;
+}
+
+.demo-blind .demo-chime {
+  animation-name: chime-mid;
+}
+
+.demo-blind .demo-ball {
+  animation-name: ball-right-late;
+}
+
+@keyframes blind {
+  0% { translate: 0 0 14px; rotate: 0deg; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  9% { rotate: -45deg; animation-timing-function: ease-in-out; }
+  26% { rotate: 0deg; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+  35% { rotate: -45deg; animation-timing-function: ease-in-out; }
+  52%, 62% { translate: 0 0 14px; rotate: 0deg; animation-timing-function: ease-in-out; }
+  74% { translate: -14px 0 14px; rotate: -18deg; animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5); }
+  80%, 88% { translate: 16px 0 14px; rotate: 38deg; animation-timing-function: ease-in-out; }
+  100% { translate: 0 0 14px; rotate: 0deg; }
+}
+
+@keyframes chime-mid {
+  0%, 54% { opacity: 0; scale: 0.6; }
+  58%, 74% { opacity: 1; scale: 1; }
+  78%, 100% { opacity: 0; }
+}
+
+@keyframes ball-right-late {
+  0%, 79% { opacity: 0; translate: 0 0 30px; }
+  81% { opacity: 1; translate: 0 0 30px; }
+  96%, 100% { opacity: 0; translate: 40px -18px 30px; }
+}

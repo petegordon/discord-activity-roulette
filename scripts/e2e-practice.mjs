@@ -61,11 +61,11 @@ try {
   if ((await lesson()) !== "twist") fail(`holding didn't pass the first lesson: ${await lesson()}`);
   await page.screenshot({ path: `${outDir}/practice-2-twist.png` });
 
-  // Tipping the phone (wrong axis) for a while earns the "dial" tip.
+  // Tipping the phone (wrong axis) for a while earns the "turn it flat" tip.
   await set({ tilt: 300 });
   await sleep(3200);
   const tip = await page.textContent("#p-hint");
-  if (!/dial/.test(tip)) fail(`no axis tip: "${tip}"`);
+  if (!/flat/.test(tip)) fail(`no axis tip: "${tip}"`);
   console.log("wrong-axis tip:", tip);
 
   async function twist() {

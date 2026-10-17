@@ -22,7 +22,7 @@ Built with Three.js, the DeviceMotion API, PeerJS (WebRTC) and a Cloudflare Work
 5. Bets close when the ball is launched. When it lands, winners are paid and the next player spins.
 6. Most chips after the last spin wins.
 
-**New to it?** [**🎓 Learn to spin**](https://roulette.housetandem.com/practice) is a practice wheel that walks you through it on your own phone with animations and spoken coaching, ending with spins done by ear, since you can't watch the screen while you twist. It's linked from the lobby and the phone remote.
+**New to it?** [**🎓 Learn to spin**](https://roulette.housetandem.com/practice) is a practice wheel that walks you through it on your own phone with animations and spoken coaching, ending with spins done by ear, since you can't watch the screen while you twist. Every twist and flick is called out as soft, good or strong. [**🎯 Calibrate**](https://roulette.housetandem.com/calibrate) has you show it 6 twists and 5 flicks, then fits the spin to how you move and saves that on your phone. The game, the phone remote and the practice page all use it. Both pages are linked from the lobby and the phone remote.
 
 **No motion sensors?** In Discord or on a desktop, use **📱 Spin with your phone** (below) or **Quick spin**.
 
@@ -58,12 +58,14 @@ With `npm run preview` running:
 node scripts/e2e.mjs http://127.0.0.1:8787 relay 3        # or: peerjs 3
 node scripts/e2e-remote.mjs http://127.0.0.1:8787 relay   # or: peerjs
 node scripts/e2e-practice.mjs http://127.0.0.1:8787
+node scripts/e2e-calibrate.mjs http://127.0.0.1:8787
 node scripts/e2e-deploy.mjs http://127.0.0.1:8787
 ```
 
 - `e2e.mjs` has headless players bet and play a 5-spin game with Quick spin. It checks that everyone saw the same pockets and chip counts, and that chips add up against the recorded payouts.
 - `e2e-remote.mjs` pairs a phone that spins with synthetic twist-and-flick motion. It also covers a host leaving mid-game and **New link** revoking the old phone.
 - `e2e-practice.mjs` walks every Learn to spin lesson with synthetic motion, including a wrong-axis twist that should earn a tip.
+- `e2e-calibrate.mjs` calibrates a gentle, screen-down player and checks that their own soft flick then launches and is judged good.
 - `e2e-deploy.mjs` checks that a page caught mid-deploy reloads itself (`public/boot-guard.js`).
 
 Screenshots go to `scripts/out/`. Add `&nomotion` to a table URL for the no-motion layout, `&t=relay` for the relay transport, and `&debug` to expose `window.roulette`.
@@ -101,7 +103,8 @@ src/
   net/                    protocol, transports (PeerJS, relay), room coordination
   platform/               environment, identity/rooms, Discord SDK, motion detection
   remote/                 the 📱 spinner remote page (remote.html, served at /remote)
-  practice/               Learn to spin (practice.html, served at /practice): lessons, demo, voice, twist coach
+  practice/               Learn to spin (practice.html, served at /practice): lessons, demo, voice, soft/good/strong judging
+  calibrate/              Calibrate (calibrate.html, served at /calibrate); the profile it saves is input/profile.ts
   render/scene.ts         Three.js wheel, ball and table
 worker/src/               Worker: assets, /api/token, /api/ice, RelayRoom Durable Object, Discord room tickets
 test/                     Vitest unit tests
