@@ -90,9 +90,6 @@ async function boot() {
         remote = null;
         ui.hidePair();
       },
-      remoteOpenHere: () => {
-        if (remote) void discord?.openExternal(remoteLink(roomId, transportKind, remote.key)).catch(() => {});
-      },
     },
     audio.muted,
   );
@@ -166,6 +163,10 @@ async function boot() {
 
   /** Why the phone is the spinner here; shown on the 📱 sheet. */
   function remoteWhy() {
+    // On Discord mobile the same phone can't be the table and the controller (leaving Discord drops the table), so ask for a second device.
+    if (inDiscord && discord?.mobile) {
+      return "Discord doesn't let Activities read motion sensors. Scan this with a second phone or tablet to spin the wheel with it, or use Quick spin.";
+    }
     if (controller?.motion === "blocked" && inDiscord) {
       return "Discord doesn't let Activities read motion sensors. Scan this with your phone's camera to spin the wheel with it.";
     }
@@ -180,7 +181,6 @@ async function boot() {
       link,
       qrSvg: renderSVG(link, { ecc: "M", border: 1 }),
       why: remoteWhy(),
-      canOpenHere: !!discord?.mobile,
       paired: me()?.remoteId === remote.id,
       online: remoteOnline(),
     });

@@ -11,7 +11,7 @@ Discord runs Activities in a cross-origin iframe that isn't delegated the `accel
 ## At the table
 
 - Without motion, your turn shows **📱 Spin with your phone** and a smaller **Quick spin**. In the lobby, **📱 Spin with your phone** offers to pair before the game starts.
-- **📱** opens a sheet with a QR code (made locally with `uqr`), the full link, **Copy link**, and, in Discord on a phone, **Open on this phone** (`openExternalLink`).
+- **📱** opens a sheet with a QR code (made locally with `uqr`), the full link, **Copy link**. In Discord on a phone it asks for a **second phone or tablet** instead (an *Open on this phone* button was removed 2026-11-11: one phone can't be the table and the spinner); Quick spin stays as the fallback.
 - Once the phone connects, everyone sees a 📱 badge on your chip and the sheet closes.
 - **New link** revokes the old one; **Unpair** stops using the phone.
 
